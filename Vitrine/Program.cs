@@ -25,12 +25,14 @@ app.UseHttpsRedirection();
 // ===== Endpoints Vitrine (apenas leitura) =====
 
 // Listar produtos com filtros, paginação e ordenação
-app.MapGet("/products", async (int page = 1, int pageSize = 10,
-                                string? category = null, 
-                                decimal? minPrice = null, decimal? maxPrice = null,
-                                string? sortBy = null, // "name" ou "price"
-                                string? sortOrder = "asc", // "asc" ou "desc"
-                                VitrineDbContext db) =>
+app.MapGet("/products", async (VitrineDbContext db,
+                                int page = 1,
+                                int pageSize = 10,
+                                string? category = null,
+                                decimal? minPrice = null,
+                                decimal? maxPrice = null,
+                                string? sortBy = null,
+                                string? sortOrder = "asc") =>
 {
     var query = db.Products.AsQueryable();
 
@@ -51,7 +53,7 @@ app.MapGet("/products", async (int page = 1, int pageSize = 10,
         ("price", "asc") => query.OrderBy(p => p.Price),
         ("name", "desc") => query.OrderByDescending(p => p.Name),
         ("name", "asc") => query.OrderBy(p => p.Name),
-        _ => query.OrderBy(p => p.Id) // padrão
+        _ => query.OrderBy(p => p.CreatedAt)
     };
 
     // Paginação
@@ -72,8 +74,8 @@ app.MapGet("/products", async (int page = 1, int pageSize = 10,
 .WithName("GetProducts")
 .WithOpenApi();
 
-// Detalhes do produto
-app.MapGet("/products/{id}", async (int id, VitrineDbContext db) =>
+// Retornar detalhes de produto
+app.MapGet("/products/{id}", async (Guid id, VitrineDbContext db) =>
 {
     var product = await db.Products.FindAsync(id);
     return product != null ? Results.Ok(product) : Results.NotFound();
@@ -81,18 +83,7 @@ app.MapGet("/products/{id}", async (int id, VitrineDbContext db) =>
 .WithName("GetProductById")
 .WithOpenApi();
 
-// Consulta de estoque
-app.MapGet("/products/{id}/stock", async (int id, VitrineDbContext db) =>
-{
-    var product = await db.Products.FindAsync(id);
-    if (product == null) return Results.NotFound();
-
-    return Results.Ok(new { ProductId = id, Stock = product.Stock });
-})
-.WithName("GetProductStock")
-.WithOpenApi();
-
-// Teste de conexão
+// Endpoint de teste de conexão
 app.MapGet("/test", async (VitrineDbContext db) =>
 {
     try
