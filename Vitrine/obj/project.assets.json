@@ -3067,6 +3067,7 @@
       "Microsoft.AspNetCore.OpenApi >= 8.0.18",
       "Microsoft.EntityFrameworkCore >= 9.0.9",
       "Microsoft.EntityFrameworkCore.Design >= 9.0.9",
+      "Npgsql >= 9.0.3",
       "Npgsql.EntityFrameworkCore.PostgreSQL >= 9.0.4",
       "Swashbuckle.AspNetCore >= 6.6.2"
     ]
@@ -3126,6 +3127,10 @@
             "suppressParent": "All",
             "target": "Package",
             "version": "[9.0.9, )"
+          },
+          "Npgsql": {
+            "target": "Package",
+            "version": "[9.0.3, )"
           },
           "Npgsql.EntityFrameworkCore.PostgreSQL": {
             "target": "Package",
