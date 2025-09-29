@@ -13,12 +13,13 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
 
-    <!-- Npgsql EF Core 9.x compatível com .NET 8 -->
+    <!-- Npgsql EF Core compatível com .NET 8 -->
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
-    <PackageReference Include="Npgsql" Version="9.0.4" />
+    <PackageReference Include="Npgsql" Version="9.0.3" />
 
-    <!-- Swagger compatível com .NET 8 -->
+    <!-- Swagger -->
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.1" />
   </ItemGroup>
 
 </Project>
+

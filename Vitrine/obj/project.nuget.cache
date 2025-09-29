@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "dgSpecHash": "goxSizUZNGQ=",
-  "success": false,
+  "dgSpecHash": "zWN7PZA2nag=",
+  "success": true,
   "projectFilePath": "/workspaces/microservico-vitrine/Vitrine/Vitrine.csproj",
   "expectedPackageFiles": [
     "/home/codespace/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
@@ -32,6 +32,7 @@
     "/home/codespace/.nuget/packages/microsoft.extensions.primitives/9.0.9/microsoft.extensions.primitives.9.0.9.nupkg.sha512",
     "/home/codespace/.nuget/packages/microsoft.openapi/1.6.14/microsoft.openapi.1.6.14.nupkg.sha512",
     "/home/codespace/.nuget/packages/mono.texttemplating/3.0.0/mono.texttemplating.3.0.0.nupkg.sha512",
+    "/home/codespace/.nuget/packages/npgsql/9.0.3/npgsql.9.0.3.nupkg.sha512",
     "/home/codespace/.nuget/packages/npgsql.entityframeworkcore.postgresql/9.0.4/npgsql.entityframeworkcore.postgresql.9.0.4.nupkg.sha512",
     "/home/codespace/.nuget/packages/swashbuckle.aspnetcore/6.6.1/swashbuckle.aspnetcore.6.6.1.nupkg.sha512",
     "/home/codespace/.nuget/packages/swashbuckle.aspnetcore.swagger/6.6.1/swashbuckle.aspnetcore.swagger.6.6.1.nupkg.sha512",
@@ -53,15 +54,5 @@
     "/home/codespace/.nuget/packages/system.text.json/9.0.9/system.text.json.9.0.9.nupkg.sha512",
     "/home/codespace/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1102",
-      "level": "Error",
-      "message": "Unable to find package Npgsql with version (>= 9.0.4)\n  - Found 183 version(s) in nuget.org [ Nearest version: 9.0.3 ]",
-      "libraryId": "Npgsql",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  "logs": []
 }
