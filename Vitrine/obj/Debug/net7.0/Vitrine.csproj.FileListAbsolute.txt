@@ -38,3 +38,6 @@
 /workspaces/microservico-vitrine/Vitrine/obj/Debug/net7.0/Vitrine.pdb
 /workspaces/microservico-vitrine/Vitrine/obj/Debug/net7.0/Vitrine.genruntimeconfig.cache
 /workspaces/microservico-vitrine/Vitrine/obj/Debug/net7.0/ref/Vitrine.dll
+/workspaces/microservico-vitrine/Vitrine/bin/Debug/net7.0/Microsoft.Extensions.DependencyModel.dll
+/workspaces/microservico-vitrine/Vitrine/bin/Debug/net7.0/Mono.TextTemplating.dll
+/workspaces/microservico-vitrine/Vitrine/bin/Debug/net7.0/System.CodeDom.dll

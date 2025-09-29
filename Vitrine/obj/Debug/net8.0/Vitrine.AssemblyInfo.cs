@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Vitrine")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e4f63ac74946a1d6afa23cdf08074ea85c81c5ac")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+602c15cca5d597a6b84047b231527a9fd9aefefb")]
 [assembly: System.Reflection.AssemblyProductAttribute("Vitrine")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Vitrine")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
