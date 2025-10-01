@@ -1,14 +1,16 @@
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Vitrine.Models
 {
+[Table("Products")]
     public class Product
     {
         public Guid Id { get; set; }  // Pode ser gerado pelo banco
 
         // Campos obrigatórios
         public required string Name { get; set; }
-        public required decimal Price { get; set; }
+        public required int Price { get; set; }
         public required string Category { get; set; }
         public required string ImagesJson { get; set; }   // JSON array de URLs
 

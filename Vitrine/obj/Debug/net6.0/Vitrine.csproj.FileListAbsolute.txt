@@ -1,0 +1,8 @@
+/workspaces/microservico-vitrine/Vitrine/obj/Debug/net6.0/Vitrine.csproj.AssemblyReference.cache
+/workspaces/microservico-vitrine/Vitrine/obj/Debug/net6.0/Vitrine.GeneratedMSBuildEditorConfig.editorconfig
+/workspaces/microservico-vitrine/Vitrine/obj/Debug/net6.0/Vitrine.AssemblyInfoInputs.cache
+/workspaces/microservico-vitrine/Vitrine/obj/Debug/net6.0/Vitrine.AssemblyInfo.cs
+/workspaces/microservico-vitrine/Vitrine/obj/Debug/net6.0/Vitrine.csproj.CoreCompileInputs.cache
+/workspaces/microservico-vitrine/Vitrine/obj/Debug/net6.0/Vitrine.MvcApplicationPartsAssemblyInfo.cs
+/workspaces/microservico-vitrine/Vitrine/obj/Debug/net6.0/Vitrine.MvcApplicationPartsAssemblyInfo.cache
+/workspaces/microservico-vitrine/Vitrine/obj/Debug/net6.0/Vitrine.sourcelink.json

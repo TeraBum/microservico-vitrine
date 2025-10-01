@@ -6,7 +6,6 @@
 /workspaces/microservico-vitrine/Vitrine/bin/Debug/net8.0/Vitrine.dll
 /workspaces/microservico-vitrine/Vitrine/bin/Debug/net8.0/Vitrine.pdb
 /workspaces/microservico-vitrine/Vitrine/bin/Debug/net8.0/Humanizer.dll
-/workspaces/microservico-vitrine/Vitrine/bin/Debug/net8.0/Microsoft.AspNetCore.OpenApi.dll
 /workspaces/microservico-vitrine/Vitrine/bin/Debug/net8.0/Microsoft.Bcl.AsyncInterfaces.dll
 /workspaces/microservico-vitrine/Vitrine/bin/Debug/net8.0/Microsoft.Build.Locator.dll
 /workspaces/microservico-vitrine/Vitrine/bin/Debug/net8.0/Microsoft.CodeAnalysis.dll
