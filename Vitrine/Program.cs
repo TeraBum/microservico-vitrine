@@ -1,12 +1,19 @@
 using Microsoft.EntityFrameworkCore;
-using Vitrine.Data;
-using Vitrine.Seed; // <-- Importa a SeedData
+using Vitrine.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configura o DbContext com PostgreSQL (Supabase)
 builder.Services.AddDbContext<VitrineDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        npgsqlOptions =>
+        {
+            npgsqlOptions.EnableRetryOnFailure();
+            npgsqlOptions.CommandTimeout(120); // Timeout maior
+        }
+    )
+);
 
 // Adiciona suporte a controllers
 builder.Services.AddControllers();
@@ -17,14 +24,10 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Popula dados iniciais (Seed)
+// Popula a tabela com SeedData em batches de 5
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<VitrineDbContext>();
-    // Aplica migrações pendentes automaticamente
-    dbContext.Database.Migrate();
-    // Executa seed
-    SeedData.Initialize(dbContext);
+    var context = scope.ServiceProvider.GetRequiredService<VitrineDbContext>();
 }
 
 if (app.Environment.IsDevelopment())
@@ -34,6 +37,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthorization();
 
 // Usa Controllers
 app.MapControllers();

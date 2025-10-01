@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Vitrine.Data;
 using Vitrine.Models;
 
 namespace Vitrine.Controllers

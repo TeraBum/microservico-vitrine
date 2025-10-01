@@ -1,16 +1,30 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Vitrine.Models;
 
-namespace Vitrine.Data
+namespace Vitrine.Models
 {
     public class VitrineDbContext : DbContext
     {
-        public VitrineDbContext(DbContextOptions<VitrineDbContext> options)
+        private readonly IConfiguration _configuration;
+
+        public VitrineDbContext(DbContextOptions<VitrineDbContext> options, IConfiguration configuration)
             : base(options)
         {
+            _configuration = configuration;
         }
 
         public DbSet<Product> Products { get; set; } = null!;
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                // Busca a string de conexão no appsettings.json
+                var connectionString = _configuration.GetConnectionString("DefaultConnection");
+                optionsBuilder.UseNpgsql(connectionString);
+            }
+        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -18,7 +32,7 @@ namespace Vitrine.Data
 
             modelBuilder.Entity<Product>(entity =>
             {
-                entity.ToTable("Product1"); // Nome exato da tabela no Supabase
+                entity.ToTable("Product"); // Nome exato da tabela no Supabase
 
                 entity.HasKey(p => p.Id)
                       .HasName("Product_pkey");
@@ -33,7 +47,7 @@ namespace Vitrine.Data
                       .IsRequired();
 
                 entity.Property(p => p.Description)
-                      .IsRequired(false);
+                      .IsRequired();
 
                 entity.Property(p => p.Price)
                       .IsRequired();
