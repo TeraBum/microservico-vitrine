@@ -17,17 +17,9 @@ WORKDIR /app
 # Copia a saída da etapa de build
 COPY --from=build /app .
 
-# Configura variáveis de ambiente (connection string etc.)
-# ⚠️ Aqui você pode sobrescrever valores ao rodar o container com -e
+# Configura variáveis de ambiente do ASP.NET
 ENV ASPNETCORE_URLS=http://+:8080
 ENV DOTNET_RUNNING_IN_CONTAINER=true
-
-# Variáveis específicas do Supabase
-ENV DB_HOST=aws-1-sa-east-1.pooler.supabase.com
-ENV DB_PORT=6543
-ENV DB_NAME=postgres
-ENV DB_USER=postgres.smjdaavxsnbmrdrvejsu
-ENV DB_PASSWORD=S3nhaS3gur@:(
 
 # Expor a porta
 EXPOSE 8080
