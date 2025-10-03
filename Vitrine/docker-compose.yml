@@ -1,0 +1,12 @@
+
+services:
+  vitrine-api:
+    build: .
+    container_name: vitrine-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - ConnectionStrings__DefaultConnection=Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};Ssl Mode=Require;Trust Server Certificate=true;TcpKeepAlive=true;Multiplexing=false
+    restart: unless-stopped
