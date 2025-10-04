@@ -15,14 +15,19 @@ namespace Vitrine.Models
         }
 
         public DbSet<Product> Products { get; set; } = null!;
+        public DbSet<StockItem> StockItems { get; set; } = null!;
+        public DbSet<StockMove> StockMoves { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
-                // Busca a string de conexão no appsettings.json
                 var connectionString = _configuration.GetConnectionString("DefaultConnection");
-                optionsBuilder.UseNpgsql(connectionString);
+                optionsBuilder.UseNpgsql(connectionString, npgsqlOptions =>
+                {
+                    npgsqlOptions.EnableRetryOnFailure();
+                    npgsqlOptions.CommandTimeout(120);
+                });
             }
         }
 
@@ -30,37 +35,51 @@ namespace Vitrine.Models
         {
             base.OnModelCreating(modelBuilder);
 
+            // Product
             modelBuilder.Entity<Product>(entity =>
             {
-                entity.ToTable("Product"); // Nome exato da tabela no Supabase
+                entity.ToTable("Product");
+                entity.HasKey(p => p.Id).HasName("Product_pkey");
+                entity.Property(p => p.Id).HasDefaultValueSql("gen_random_uuid()");
+                entity.Property(p => p.CreatedAt).HasDefaultValueSql("now()");
+                entity.Property(p => p.Name).IsRequired();
+                entity.Property(p => p.Description).HasDefaultValue(string.Empty).IsRequired(false);
+                entity.Property(p => p.Price).IsRequired();
+                entity.Property(p => p.Category).IsRequired();
+                entity.Property(p => p.ImagesJson).HasColumnType("json").IsRequired();
+                entity.Property(p => p.IsActive).HasDefaultValue(true);
 
-                entity.HasKey(p => p.Id)
-                      .HasName("Product_pkey");
+                // Relação com StockItems
+                entity.HasMany(p => p.StockItems)
+                      .WithOne(s => s.Product)
+                      .HasForeignKey(s => s.ProductId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
-                entity.Property(p => p.Id)
-                      .HasDefaultValueSql("gen_random_uuid()");
+            // StockItem
+            modelBuilder.Entity<StockItem>(entity =>
+            {
+                entity.ToTable("StockItems");
+                entity.HasKey(s => s.Id);
+                entity.Property(s => s.Quantity).IsRequired();
+                entity.Property(s => s.Location).IsRequired();
+                entity.Property(s => s.CreatedAt).HasDefaultValueSql("now()");
 
-                entity.Property(p => p.CreatedAt)
-                      .HasDefaultValueSql("now()");
+                // Relação com StockMoves
+                entity.HasMany(s => s.StockMoves)
+                      .WithOne(m => m.StockItem)
+                      .HasForeignKey(m => m.StockItemId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
 
-                entity.Property(p => p.Name)
-                      .IsRequired();
-
-                entity.Property(p => p.Description)
-                      .IsRequired();
-
-                entity.Property(p => p.Price)
-                      .IsRequired();
-
-                entity.Property(p => p.Category)
-                      .IsRequired();
-
-                entity.Property(p => p.ImagesJson)
-                      .HasColumnType("json")
-                      .IsRequired();
-
-                entity.Property(p => p.IsActive)
-                      .HasDefaultValue(true);
+            // StockMove
+            modelBuilder.Entity<StockMove>(entity =>
+            {
+                entity.ToTable("StockMoves");
+                entity.HasKey(s => s.Id);
+                entity.Property(s => s.QuantityChange).IsRequired();
+                entity.Property(s => s.MoveType).IsRequired();
+                entity.Property(s => s.MoveDate).HasDefaultValueSql("now()");
             });
         }
     }

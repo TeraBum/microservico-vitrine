@@ -3,14 +3,24 @@ using Vitrine.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configura o DbContext com PostgreSQL (Supabase)
+// Lê variáveis de ambiente diretamente
+var host = Environment.GetEnvironmentVariable("DB_HOST") ?? "aws-1-sa-east-1.pooler.supabase.com";
+var port = Environment.GetEnvironmentVariable("DB_PORT") ?? "5432"; // Shared Pooler
+var dbName = Environment.GetEnvironmentVariable("DB_NAME") ?? "postgres";
+var user = Environment.GetEnvironmentVariable("DB_USER") ?? "postgres.smjdaavxsnbmrdrvejsu";
+var password = Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "S3nhaS3gur@:(";
+
+// Monta connection string para Shared Pooler
+var connectionString = $"Host={host};Port={port};Database={dbName};Username={user};Password={password};Ssl Mode=Require;Trust Server Certificate=true";
+
+// Configura o DbContext com PostgreSQL (Supabase Shared Pooler)
 builder.Services.AddDbContext<VitrineDbContext>(options =>
     options.UseNpgsql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
+        connectionString,
         npgsqlOptions =>
         {
-            npgsqlOptions.EnableRetryOnFailure();
-            npgsqlOptions.CommandTimeout(120); // Timeout maior
+            npgsqlOptions.EnableRetryOnFailure(); // Agora funciona no Shared Pooler
+            npgsqlOptions.CommandTimeout(120);    // Timeout maior
         }
     )
 );
@@ -24,10 +34,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Popula a tabela com SeedData em batches de 5
+// Inicializa contexto (opcional)
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<VitrineDbContext>();
+    // SeedData.Initialize(context); // Se quiser popular a tabela
 }
 
 if (app.Environment.IsDevelopment())
@@ -39,7 +50,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
-// Usa Controllers
+// Map Controllers
 app.MapControllers();
 
 app.Run();
