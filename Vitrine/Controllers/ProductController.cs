@@ -73,59 +73,18 @@ namespace Vitrine.Controllers
             return Ok(product);
         }
 
-        // POST: api/Product
-        [HttpPost]
-        public async Task<IActionResult> CreateProduct(Product product)
+        // GET: api/Product/{id}/stock
+        [HttpGet("{id}/stock")]
+        public async Task<IActionResult> GetProductStock(Guid id)
         {
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
-        }
+            var stockItems = await _context.StockItems
+                .Where(s => s.ProductId == id)
+                .Include(s => s.StockMoves)
+                .ToListAsync();
 
-        // PUT: api/Product/{id}
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateProduct(Guid id, Product updatedProduct)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null) return NotFound();
+            if (!stockItems.Any()) return NotFound();
 
-            product.Name = updatedProduct.Name;
-            product.Price = updatedProduct.Price;
-            product.Description = updatedProduct.Description;
-            product.Category = updatedProduct.Category;
-            product.ImagesJson = updatedProduct.ImagesJson;
-            product.IsActive = updatedProduct.IsActive;
-
-            await _context.SaveChangesAsync();
-            return Ok(product);
-        }
-
-        // DELETE: api/Product/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProduct(Guid id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product == null) return NotFound();
-
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        // GET: api/Product/test
-        [HttpGet("test")]
-        public async Task<IActionResult> TestConnection()
-        {
-            try
-            {
-                var count = await _context.Products.CountAsync();
-                return Ok($"Conexão OK! Produtos cadastrados: {count}");
-            }
-            catch (Exception ex)
-            {
-                return BadRequest($"Erro na conexão: {ex.Message}");
-            }
+            return Ok(stockItems);
         }
     }
 }

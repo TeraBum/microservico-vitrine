@@ -1,4 +1,5 @@
 
+
 services:
   vitrine-api:
     build: .
@@ -8,5 +9,5 @@ services:
     env_file:
       - .env
     environment:
-      - ConnectionStrings__DefaultConnection=Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};Ssl Mode=Require;Trust Server Certificate=true;TcpKeepAlive=true;Multiplexing=false
+      - ConnectionStrings__DefaultConnection=Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};Ssl Mode=Require;Trust Server Certificate=true;Max Auto Prepare=0
     restart: unless-stopped
