@@ -5,7 +5,7 @@ using Vitrine.Models;
 namespace Vitrine.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/vitrine/[controller]")]
     public class ProductController : ControllerBase
     {
         private readonly VitrineDbContext _context;
@@ -15,7 +15,7 @@ namespace Vitrine.Controllers
             _context = context;
         }
 
-        // GET: api/Product
+        // 🟢 GET: api/v1/vitrine/product
         [HttpGet]
         public async Task<IActionResult> GetProducts(
             int page = 1,
@@ -28,7 +28,7 @@ namespace Vitrine.Controllers
         {
             var query = _context.Products.AsQueryable();
 
-            // Filtros
+            // 🔹 Filtros
             if (!string.IsNullOrEmpty(category))
                 query = query.Where(p => p.Category == category);
 
@@ -38,7 +38,7 @@ namespace Vitrine.Controllers
             if (maxPrice.HasValue)
                 query = query.Where(p => p.Price <= maxPrice.Value);
 
-            // Ordenação
+            // 🔹 Ordenação
             query = (sortBy?.ToLower(), sortOrder?.ToLower()) switch
             {
                 ("price", "desc") => query.OrderByDescending(p => p.Price),
@@ -48,7 +48,7 @@ namespace Vitrine.Controllers
                 _ => query.OrderBy(p => p.CreatedAt)
             };
 
-            // Paginação
+            // 🔹 Paginação
             var totalItems = await query.CountAsync();
             var products = await query
                 .Skip((page - 1) * pageSize)
@@ -64,7 +64,7 @@ namespace Vitrine.Controllers
             });
         }
 
-        // GET: api/Product/{id}
+        // 🟢 GET: api/v1/vitrine/product/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById(Guid id)
         {
@@ -73,18 +73,30 @@ namespace Vitrine.Controllers
             return Ok(product);
         }
 
-        // GET: api/Product/{id}/stock
+        // 🟢 GET: api/v1/vitrine/product/{id}/stock
+        // Faz o JOIN entre Product, StockItems e Warehouse
         [HttpGet("{id}/stock")]
         public async Task<IActionResult> GetProductStock(Guid id)
         {
-            var stockItems = await _context.StockItems
+            var productStock = await _context.StockItems
+                .Include(s => s.Product)
+                .Include(s => s.Warehouse)
                 .Where(s => s.ProductId == id)
-                .Include(s => s.StockMoves)
+                .Select(s => new
+                {
+                    ProductName = s.Product.Name,
+                    ProductDescription = s.Product.Description,
+                    Warehouse = s.Warehouse.Name,
+                    Quantity = s.Quantity,
+                    Reserved = s.Reserved,
+                    UpdatedAt = s.UpdatedAt
+                })
                 .ToListAsync();
 
-            if (!stockItems.Any()) return NotFound();
+            if (!productStock.Any())
+                return NotFound(new { Message = "Nenhum estoque encontrado para este produto." });
 
-            return Ok(stockItems);
+            return Ok(productStock);
         }
     }
 }

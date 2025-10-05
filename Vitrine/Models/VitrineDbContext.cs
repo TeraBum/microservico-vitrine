@@ -1,6 +1,5 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Vitrine.Models;
 
 namespace Vitrine.Models
 {
@@ -16,7 +15,7 @@ namespace Vitrine.Models
 
         public DbSet<Product> Products { get; set; } = null!;
         public DbSet<StockItem> StockItems { get; set; } = null!;
-        public DbSet<StockMove> StockMoves { get; set; } = null!;
+        public DbSet<Warehouse> Warehouses { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,7 +34,7 @@ namespace Vitrine.Models
         {
             base.OnModelCreating(modelBuilder);
 
-            // Product
+            // 🔹 Product
             modelBuilder.Entity<Product>(entity =>
             {
                 entity.ToTable("Product");
@@ -49,37 +48,41 @@ namespace Vitrine.Models
                 entity.Property(p => p.ImagesJson).HasColumnType("json").IsRequired();
                 entity.Property(p => p.IsActive).HasDefaultValue(true);
 
-                // Relação com StockItems
                 entity.HasMany(p => p.StockItems)
                       .WithOne(s => s.Product)
                       .HasForeignKey(s => s.ProductId)
                       .OnDelete(DeleteBehavior.Cascade);
             });
 
-            // StockItem
+            // 🔹 Warehouse
+            modelBuilder.Entity<Warehouse>(entity =>
+            {
+                entity.ToTable("Warehouse");
+                entity.HasKey(w => w.Id).HasName("Warehouse_pkey");
+                entity.Property(w => w.Id).HasDefaultValueSql("gen_random_uuid()");
+                entity.Property(w => w.CreatedAt).HasDefaultValueSql("now()");
+                entity.Property(w => w.Name).IsRequired();
+                entity.Property(w => w.Location).IsRequired();
+            });
+
+            // 🔹 StockItem
             modelBuilder.Entity<StockItem>(entity =>
             {
                 entity.ToTable("StockItems");
-                entity.HasKey(s => s.Id);
-                entity.Property(s => s.Quantity).IsRequired();
-                entity.Property(s => s.Location).IsRequired();
-                entity.Property(s => s.CreatedAt).HasDefaultValueSql("now()");
+                entity.HasKey(s => new { s.ProductId, s.WarehouseId }).HasName("StockItems_pkey");
+                entity.Property(s => s.Quantity).HasDefaultValue(0);
+                entity.Property(s => s.Reserved).HasDefaultValue(0);
+                entity.Property(s => s.UpdatedAt).HasDefaultValueSql("now()");
 
-                // Relação com StockMoves
-                entity.HasMany(s => s.StockMoves)
-                      .WithOne(m => m.StockItem)
-                      .HasForeignKey(m => m.StockItemId)
+                entity.HasOne(s => s.Product)
+                      .WithMany(p => p.StockItems)
+                      .HasForeignKey(s => s.ProductId)
                       .OnDelete(DeleteBehavior.Cascade);
-            });
 
-            // StockMove
-            modelBuilder.Entity<StockMove>(entity =>
-            {
-                entity.ToTable("StockMoves");
-                entity.HasKey(s => s.Id);
-                entity.Property(s => s.QuantityChange).IsRequired();
-                entity.Property(s => s.MoveType).IsRequired();
-                entity.Property(s => s.MoveDate).HasDefaultValueSql("now()");
+                entity.HasOne(s => s.Warehouse)
+                      .WithMany(w => w.StockItems)
+                      .HasForeignKey(s => s.WarehouseId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
         }
     }
