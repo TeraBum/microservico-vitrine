@@ -41,7 +41,7 @@ using (var scope = app.Services.CreateScope())
     // SeedData.Initialize(context); // Se quiser popular a tabela
 }
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
