@@ -1,75 +1,83 @@
-# API ServiceVitrine
----
-## 📘 Visão Geral da API
+# API VitrineService
+## Visão Geral da API
+A Vitrine API é um microserviço desenvolvido em .NET 8 com o SDK Microsoft.NET.Sdk.Web. Seu objetivo é centralizar dados de produtos e disponibilizá-los para outros módulos do ecossistema (carrinho, pedidos, estoque) por meio de endpoints RESTful padronizados.
 
-A **Vitrine API** é um microserviço desenvolvido em **.NET 8** com o SDK `Microsoft.NET.Sdk.Web`, responsável por disponibilizar informações sobre produtos de forma estruturada e escalável.
+A aplicação segue princípios de modularidade, baixo acoplamento e alta coesão, ideal para integração em arquiteturas de microserviços.
 
-Seu principal objetivo é **centralizar dados de produtos** e disponibilizá-los para outros módulos do ecossistema (como o carrinho, pedidos e estoque), por meio de **endpoints RESTful** padronizados.
+### Tipo de API
+A aplicação é uma API RESTful, usando ASP.NET Core Web API e protocolo HTTP. Os recursos são organizados por URI, garantindo estrutura clara, escalável e interoperável.
 
-A aplicação segue os princípios de **modularidade**, **baixo acoplamento** e **alta coesão**, sendo ideal para integração em arquiteturas baseadas em microserviços.
----
-## 🧩 Tipo e Maturidade da API
+### Modelo de Maturidade REST (Richardson)
+A API está no Nível 2 do Modelo de Richardson:
 
-### 🔷 Tipo de API
+Nível 0 – Swamp of POX: ❌ Um único endpoint, sem semântica HTTP
 
-Esta aplicação foi desenvolvida como uma **API RESTful**, conforme indicado no arquivo de projeto:
+Nível 1 – Recursos: ✅ URIs específicas para cada recurso
 
-```xml
-<Project Sdk="Microsoft.NET.Sdk.Web">
-```
+Nível 2 – Verbos HTTP: ✅ Métodos HTTP adequados (GET, POST, etc.) e status padronizados (200, 404)
 
-A utilização do SDK `Microsoft.NET.Sdk.Web` demonstra que o projeto foi criado como uma **aplicação ASP.NET Core Web API**, seguindo o padrão **REST**.
-A API utiliza o protocolo **HTTP** para comunicação entre cliente e servidor e organiza seus **recursos por URI**, o que favorece uma estrutura clara, escalável e interoperável.
+Nível 3 – HATEOAS: 🚧 Em desenvolvimento, retornando links dinâmicos
 
----
-### 🔷 Endpoints Principais
+### Endpoints Principais
+- GET /api/v1/vitrine/Product – Lista produtos disponíveis
+- GET /api/v1/vitrine/Product/{id} – Detalhes de um produto específico
+- GET /api/v1/vitrine/Product/{id}/stock – Estoque do produto
 
-A seguir estão os principais endpoints disponíveis no módulo **Vitrine**:
+Os endpoints seguem estrutura hierárquica e semântica, refletindo a relação recurso/sub-recurso.
 
-| Método  | Endpoint                             | Descrição                                         |
-| :------ | :----------------------------------- | :------------------------------------------------ |
-| **GET** | `/api/v1/vitrine/Product`            | Retorna a lista de produtos disponíveis.          |
-| **GET** | `/api/v1/vitrine/Product/{id}`       | Retorna os detalhes de um produto específico.     |
-| **GET** | `/api/v1/vitrine/Product/{id}/stock` | Retorna o estoque atual de um produto específico. |
+## Execução com Docker
+Arquivos principais:
+- Dockerfile – define a imagem da aplicação
+- docker-compose.yml – orquestra serviços e variáveis de ambiente
+- .env – contém variáveis sensíveis (host, porta, usuário, senha, banco)
 
-Os endpoints seguem uma **estrutura hierárquica e semântica**, refletindo o relacionamento entre **recurso** (`Product`) e **sub-recurso** (`stock`).
----
-### 🔷 Modelo de Maturidade REST (Richardson Maturity Model)
+#### Exemplo de serviço no docker-compose.yml:
+services:
+vitrine-api:
+build: .
+container_name: vitrine-api
+ports:
+- "8080:8080"
+env_file:
+- .env
+environment:
+- ConnectionStrings__DefaultConnection=Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};Ssl Mode=Require;Trust Server Certificate=true
+restart: unless-stopped
 
-A API foi avaliada de acordo com o **Modelo de Maturidade de Richardson**, que classifica o grau de aderência aos princípios REST em quatro níveis:
+#### Como Rodar a Aplicação
 
-| Nível | Nome         | Descrição                                                      | Status                |
-| :---- | :----------- | :------------------------------------------------------------- | :-------------------- |
-| **0** | Swamp of POX | Um único endpoint, sem uso semântico de HTTP.                  | ❌                     |
-| **1** | Recursos     | Introduz URIs específicas para cada recurso.                   | ✅                     |
-| **2** | Verbos HTTP  | Usa métodos HTTP (GET, POST, PUT, DELETE) e status adequados.  | ✅                     |
-| **3** | HATEOAS      | Retorna links dinâmicos guiando o cliente para próximas ações. | 🚧 Em desenvolvimento |
+- Modo local (.NET CLI):
+  dotnet run
+  Disponível em: http://localhost:8080/swagger
 
-Atualmente, a API se encontra no **Nível 2**, pois:
+- Docker Compose:
+  docker compose up
+  Para rebuildar após mudanças: docker compose up --build
 
-* Define **recursos específicos** (`Product`, `Stock`);
-* Utiliza **métodos HTTP adequados** (`GET`);
-* Retorna **status HTTP padronizados** (como 200 e 404).
+#### Conexão com Banco de Dados (Supabase / RDS)
+Configurada via variáveis de ambiente no arquivo .env.
 
-O próximo passo será atingir o **Nível 3 (HATEOAS)**, retornando links dinâmicos que permitam ao cliente descobrir novas ações sem depender de documentação externa.
+#### Exemplo de .env:
+DB_HOST=aws-1-sa-east-1.pooler.supabase.com
+DB_PORT=6543
+DB_NAME=postgres
+DB_USER=postgres.smjdaavxsnbmrdrvejsu
+DB_PASSWORD=S3nhaS3gur@:
 
-**Exemplo de retorno com HATEOAS (em desenvolvimento):**
-
-```json
+#### No appsettings.json:
 {
-  "id": 1,
-  "name": "Produto X",
-  "price": 199.90,
-  "links": [
-    { "rel": "self", "href": "/api/v1/vitrine/Product/1" },
-    { "rel": "stock", "href": "/api/v1/vitrine/Product/1/stock" }
-  ]
+"ConnectionStrings": {
+"DefaultConnection": "Host=${DB_HOST};Port=${DB_PORT};Database=${DB_NAME};Username=${DB_USER};Password=${DB_PASSWORD};Ssl Mode=Require;Trust Server Certificate=true"
 }
-```
+}
 
----
+*Benefícios:*
+- Segurança: senhas e dados sensíveis fora do código
+- Portabilidade: configuração consistente entre ambientes
+- Escalabilidade: fácil em produção com Docker
 
-### 🔷 Conclusão
-
-A API **segue o padrão REST**, foi **construída em .NET 8** utilizando o SDK **Microsoft.NET.Sdk.Web**, e atinge o **Nível 2 do Modelo de Maturidade REST**.
-Essa arquitetura garante uma **comunicação clara, organizada e compatível** com diferentes tipos de clientes, como aplicações web, mobile e sistemas externos.
+## Conclusão
+- A API segue padrão REST, construída em .NET 8, no Nível 2 de maturidade, executável via .NET CLI ou Docker Compose, garantindo:
+- Comunicação clara e organizada com diferentes clientes
+- Portabilidade e segurança com variáveis de ambiente
+- Facilidade de escalabilidade em produção
