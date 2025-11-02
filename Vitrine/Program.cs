@@ -1,3 +1,4 @@
+using Microsoft.CodeAnalysis.Host.Mef;
 using Microsoft.EntityFrameworkCore;
 using Vitrine.Models;
 
@@ -48,6 +49,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsProduction())
 }
 
 app.UseHttpsRedirection();
+app.UseCors(builder =>
+    builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+    );
 app.UseAuthorization();
 
 // Map Controllers
